@@ -6,12 +6,20 @@ import {
   Image,
   Button,
   TouchableOpacity,
+  TouchableNativeFeedback,
+  Platform,
 } from "react-native";
 //stylesheet css binding Object
 
 const ProductItem = (props: any) => {
+  let TouchableComponent =
+    Platform.OS === "android" && Platform.Version >= 21
+      ? TouchableNativeFeedback
+      : TouchableOpacity;
+
   return (
-    <TouchableOpacity onPress={props.onViewDetail}>
+    //@ts-ignore
+    <TouchableComponent onPress={props.onViewDetail} useForeground>
       <View style={styles.product}>
         <View style={styles.imageContrainer}>
           <Image style={styles.image} source={{ uri: props.imageUrl }} />
@@ -21,11 +29,11 @@ const ProductItem = (props: any) => {
           <Text style={styles.price}>${props.price}</Text>
         </View>
         <View style={styles.actions}>
-          <Button title="View Details" onPress={props.onViewDetrail} />
-          <Button title="To Cart" onPress={props.onAddToCart} />
+          <Button title="View Details" onPress={props.onViewDetail} />
+          <Button title="Add to Cart" onPress={props.onAddToCart} />
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableComponent>
   );
 };
 
@@ -55,6 +63,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     marginVertical: 4,
+    fontFamily: "open-sans-bold",
   },
   price: {
     fontSize: 14,
@@ -70,7 +79,7 @@ const styles = StyleSheet.create({
   details: {
     alignItems: "center",
     height: "15%",
-    padding: 2,
+    padding: 2
   },
 });
 

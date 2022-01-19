@@ -18,13 +18,14 @@ const ProductDetailsScreen = (props: any) => {
   return (
     <ScrollView>
       <Image style={styles.image} source={{ uri: selectedProduct.imageUrl }} />
-      <Button title="Add to Cart" onPress={() => {}} />
-      <Text>${selectedProduct.price.toFixed(2)}</Text>
-      <Text>{selectedProduct.description}</Text>
+      <View style={styles.actions}>
+        <Button title="Add to Cart" onPress={() => {}} />
+      </View>
+      <Text style={styles.description}>${selectedProduct.price.toFixed(2)}</Text>
+      <Text style={styles.description}>{selectedProduct.description}</Text>
     </ScrollView>
   );
 };
-
 
 //you can read the params through route.params inside a screen
 const styles = StyleSheet.create({
@@ -36,9 +37,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#888",
     textAlign: "center",
-    marginVertical: "20",
+    marginVertical: "20"
   },
-  description: {},
+  description: {
+    fontSize: 14,
+    textAlign: "center",
+    marginHorizontal: 20,
+  },
+  actions: {
+    marginVertical: 10,
+    alignItems: "center",
+  },
 });
 
 export default ProductDetailsScreen;

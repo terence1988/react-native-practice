@@ -1,13 +1,15 @@
 import React from "react";
 import { FlatList, Text } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../App";
 import ProductItem from "../../components/ProductItem";
+import * as cartActions from "../../store/actions/cart";
 
 const ProductOverviewScreen = (props: any) => {
   const products = useSelector(
     (state: RootState) => state.products.availableProducts
   );
+  const dispatch = useDispatch();
   return (
     <FlatList
       data={products}
@@ -21,18 +23,17 @@ const ProductOverviewScreen = (props: any) => {
           onViewDetail={() => {
             props.navigation.navigate("Product Details", {
               productId: itemData.item.id,
-              productTitle:itemData.item.title
+              productTitle: itemData.item.title,
             });
           }}
-          onAddToCart={() => {}}
+          onAddToCart={() => {
+            // that is action creator action
+            dispatch(cartActions.addToCart(itemData.item));
+          }}
         />
       )}
     />
   );
-};
-
-ProductOverviewScreen.options = {
-  headerTitle: "All Products",
 };
 
 export default ProductOverviewScreen;
