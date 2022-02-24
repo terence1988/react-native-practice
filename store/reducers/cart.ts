@@ -1,4 +1,9 @@
-import { ADD_TO_CART, addToCart } from "../actions/cart";
+import {
+  ADD_TO_CART,
+  addToCart,
+  REMOVE_FROM_CART,
+  removeFromCart,
+} from "../actions/cart";
 import CartItem from "../../models/cart-item";
 
 const initialState: {
@@ -11,7 +16,7 @@ const initialState: {
 
 export default (
   state = initialState,
-  action: { type: string; product: any }
+  action: { type: string; product?: any; pid?: string }
 ) => {
   switch (action.type) {
     case ADD_TO_CART:
@@ -28,10 +33,10 @@ export default (
           (state.items[addedProduct.id].quantity + 1) * prodPrice
         );
         return {
-            ...state,
-            items: { ...state.items, [addedProduct.id]: updatedOrNewCartItem },
-            totalAmount: state.totalAmount + prodPrice,
-          };
+          ...state,
+          items: { ...state.items, [addedProduct.id]: updatedOrNewCartItem },
+          totalAmount: state.totalAmount + prodPrice,
+        };
       } else {
         updatedOrNewCartItem = new CartItem(1, prodPrice, prodTitle, prodPrice);
       }
@@ -40,30 +45,30 @@ export default (
         items: { ...state.items, [addedProduct.id]: updatedOrNewCartItem },
         totalAmount: state.totalAmount + prodPrice,
       };
-    // case REMOVE_FROM_CART:
-    //   const selectedCartItem = state.items[action.pid];
-    //   const currentQty = selectedCartItem.quantity;
-    //   let updatedCartItems;
-    //   if (currentQty > 1) {
-    //     // reduce the quantity of the item
-    //     const updatedCartItem = {
-    //       ...selectedCartItem,
-    //       quantity: selectedCartItem.quantity - 1,
-    //       totalAmount: selectedCartItem.totalAmount - selectedCartItem.price,
-    //     };
-    //     updatedCartItems = { ...state.items, [action.pid]: updatedCartItem };
-    //   } else {
-    //     updatedCartItems = { ...state.items };
-    //     delete updatedCartItems[action.pid];
-    //   }
-    //   return {
-    //     ...state,
-    //     items: updatedCartItems,
-    //     totalAmount: state.totalAmount - selectedCartItem.price,
-    //   };
+    case REMOVE_FROM_CART:
+      const selectedCartItem = state.items[action.pid!];
+      const currentQty = selectedCartItem.quantity;
+      let updatedCartItems;
+      if (currentQty > 1) {
+        // reduce the quantity of the item
+        const updatedCartItem = {
+          ...selectedCartItem,
+          quantity: selectedCartItem.quantity - 1,
+          totalAmount: selectedCartItem.totalAmount - selectedCartItem.productPrice,
+        };
+        updatedCartItems = { ...state.items, [action.pid!]: updatedCartItem };
+      } else {
+        updatedCartItems = { ...state.items };
+        delete updatedCartItems[action.pid!];
+      }
+      return {
+        ...state,
+        items: updatedCartItems,
+        totalAmount: state.totalAmount - selectedCartItem.productPrice,
+      };
     // case CLEAR_CART:
     //   return initialState;
     default:
-      return state;
+      return { ...state };
   }
 };

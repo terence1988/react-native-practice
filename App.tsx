@@ -6,11 +6,13 @@ import * as Font from "expo-font";
 import { composeWithDevTools } from "redux-devtools-extension";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
+import orderReducer from "./store/reducers/order";
 import AppNavigation from "./navigation/AppNavigator";
 
 const rootReducer = combineReducers({
   products: productsReducer,
   cart: cartReducer,
+  orders: orderReducer,
 });
 
 const store: Store = createStore(rootReducer, composeWithDevTools());

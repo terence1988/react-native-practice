@@ -10,8 +10,6 @@ const initialState: ProductInitialState = {
   userProducts: PRODUCTS.filter((product) => product.ownerId === "u1"), //selected products
 };
 
-const productsReducer = (state = initialState, action: any) => {
+export default (state = initialState, action: any) => {
   return state;
 };
-
-export default productsReducer;

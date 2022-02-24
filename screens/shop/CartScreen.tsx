@@ -1,13 +1,16 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { View, FlatList, Button, StyleSheet, Text } from "react-native";
 
 import CartItem from "../../components/CartItem";
+import * as cartAction from "../../store/actions/cart";
+import * as ordersAction from "../../store/actions/order";
 
 const CartScreen = () => {
   const cartTotalAmount = useSelector((state: any) => state.cart.totalAmount);
+  const dispatch = useDispatch();
   const cartItems = useSelector((state: any) => {
-    const tramsformedCartItems: {}[] = [];
+    const tramsformedCartItems: any[] = [];
     for (const key in state.cart.items) {
       tramsformedCartItems.push({
         productId: key,
@@ -23,13 +26,16 @@ const CartScreen = () => {
     <View style={styles.screen}>
       <View style={styles.summary}>
         <Text style={styles.summaryText}>
-          Total:{' '}
+          Total:{" "}
           <Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
         </Text>
         <Button
-          color={'red'}
+          color={"red"}
           title="Order Now"
           disabled={cartItems.length === 0}
+          onPress={() => {
+            dispatch(ordersAction.addOrder(cartItems, cartTotalAmount));
+          }}
         />
       </View>
       <View>
@@ -37,15 +43,17 @@ const CartScreen = () => {
           data={cartItems}
           keyExtractor={(item) => item.productId}
           renderItem={(itemData) => {
-              return (
+            return (
               <CartItem
                 quantity={itemData.item.quantity}
                 productId={itemData.item.productId}
                 title={itemData.item.productTitle}
                 sum={itemData.item.sum}
-                onRemove={() => {}}
+                onRemove={() => {
+                  dispatch(cartAction.removeFromCart(itemData.item.productId));
+                }}
               />
-            )
+            );
           }}
         ></FlatList>
       </View>
