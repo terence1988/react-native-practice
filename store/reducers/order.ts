@@ -14,7 +14,7 @@ export default (state = initialState, action: any) => {
         Date.now().toString(),
         action.orderData.items,
         action.orderData.amount,
-        Date.now().toString()
+        new Date()
       );
       return {
         ...state,

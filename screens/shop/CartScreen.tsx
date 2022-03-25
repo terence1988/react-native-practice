@@ -49,6 +49,7 @@ const CartScreen = () => {
                 productId={itemData.item.productId}
                 title={itemData.item.productTitle}
                 sum={itemData.item.sum}
+                deletable
                 onRemove={() => {
                   dispatch(cartAction.removeFromCart(itemData.item.productId));
                 }}
@@ -80,5 +81,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
 });
+
+CartScreen.navigationOptions = (navData:any) => {}
 
 export default CartScreen;
