@@ -27,7 +27,7 @@ const CartScreen = () => {
       <View style={styles.summary}>
         <Text style={styles.summaryText}>
           Total:{" "}
-          <Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
+          <Text style={styles.amount}>${Math.abs(cartTotalAmount).toFixed(2)}</Text>
         </Text>
         <Button
           color={"red"}
@@ -81,7 +81,5 @@ const styles = StyleSheet.create({
     color: "#666",
   },
 });
-
-CartScreen.navigationOptions = (navData:any) => {}
 
 export default CartScreen;

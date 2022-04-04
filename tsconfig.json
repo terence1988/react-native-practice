@@ -4,5 +4,10 @@
     "jsx": "react",
     "strict": true,
     "esModuleInterop": true
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
   }
 }

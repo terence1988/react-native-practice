@@ -12,7 +12,9 @@ import OrdersScreen from "../screens/shop/OrdersScreen";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import { Ionicons } from "@expo/vector-icons";
-import UserProductScreen from "../screens/user/UserProduct";
+
+import UserProductScreen from "../screens/user/UserProductScreen";
+import EditProductScreen from "../screens/user/EditProductScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -65,7 +67,6 @@ const ProductNavigator = () => {
       <Stack.Screen
         name="Product Details"
         options={({ navigation, route }) => {
-          
           return {
             //@ts-expect-error
             title: route?.params?.productTitle,
@@ -85,6 +86,18 @@ const ProductNavigator = () => {
         component={ProductDetailsScreen}
       />
       <Stack.Screen name="Cart" component={CartScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const UserNavigator = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="User Product"
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="User Product" component={UserProductScreen} />
+      <Stack.Screen name="Edit Product" component={EditProductScreen} />
     </Stack.Navigator>
   );
 };
@@ -140,10 +153,33 @@ const AppNavigator = () => {
           };
         }}
       />
-      <Drawer.Screen 
+      <Drawer.Screen
         name="Admin"
-        component={UserProductScreen}
-      
+        component={UserNavigator}
+        options={({ navigation, route }) => {
+          return {
+            drawerIcon: (drawerConfig) => {
+              return (
+                <Ionicons
+                  name={Platform.OS === "android" ? "md-cog" : "ios-cog"}
+                  size={23}
+                  color={drawerConfig.focused ? "green" : "lightblue"}
+                />
+              );
+            },
+            headerRight: () => (
+              <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                  title={"Add"}
+                  iconName={Platform.OS === "android" ? "md-add" : "ios-add"}
+                  onPress={() => {
+                    navigation.navigate(`Edit Product`);
+                  }}
+                />
+              </HeaderButtons>
+            ),
+          };
+        }}
       />
     </Drawer.Navigator>
   );

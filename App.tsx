@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { createStore, combineReducers, Store } from "redux";
+import { combineReducers, Store } from "redux";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
-import { composeWithDevTools } from "redux-devtools-extension";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
 import orderReducer from "./store/reducers/order";
@@ -15,7 +15,20 @@ const rootReducer = combineReducers({
   orders: orderReducer,
 });
 
-const store: Store = createStore(rootReducer, composeWithDevTools());
+const store: Store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
+// This serializableCheck causes errors in the app. Not sure why it's even used
+// Avoid putting non-serializable values such as Promises, Symbols,
+// Maps/Sets, functions, or class instances into 
+// the Redux store state or dispatched actions.
+// This ensures that capabilities such as debugging via the Redux DevTools 
+// will work as expected. It also ensures that the UI will update as expected.
+// probably the JSON.stringify() 
 
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
