@@ -1,4 +1,5 @@
 node_modules/
+constants/
 .expo/
 dist/
 npm-debug.*
@@ -14,4 +15,3 @@ payload.json
 # macOS
 .DS_Store
 
-constant/
