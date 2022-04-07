@@ -14,3 +14,4 @@ payload.json
 # macOS
 .DS_Store
 
+constant/
