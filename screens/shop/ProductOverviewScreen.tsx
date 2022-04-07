@@ -12,23 +12,35 @@ import { RootState } from "../../App";
 import ProductItem from "../../components/ProductItem";
 import * as cartActions from "../../store/actions/cart";
 import * as productActions from "../../store/actions/products";
+// -> import {useFocusEffect} from '@react-navigation/native' better to use this
 
 const ProductOverviewScreen = (props: any) => {
   const products = useSelector(
     (state: RootState) => state.products.availableProducts
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const [error, setError] = useState<unknown>();
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const fetchDataOnNavi = props.navigation.addListener("willFocus", () => {
+      productActions.fetchProducts();
+    });
+    return fetchDataOnNavi; // return the named function will cleanup the listener --> magic
+  }, [props, productActions.fetchProducts]);
+
+  useEffect(() => {
     setIsLoading(true);
+    setError(null);
     try {
       setTimeout(async () => {
         dispatch(productActions.fetchProducts());
         setIsLoading(false);
       }, 3000);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      setError(err);
       setIsLoading(false);
     }
   }, []);
@@ -56,6 +68,14 @@ const ProductOverviewScreen = (props: any) => {
 
   return (
     <FlatList
+      onRefresh={() => {
+        setIsRefreshing(true);
+        setTimeout(() => {
+          dispatch(productActions.fetchProducts());
+          setIsRefreshing(false);
+        }, 3000);
+      }}
+      refreshing={isRefreshing}
       data={products}
       keyExtractor={(item) => item.id}
       //itemData -s the default RN obj which has item property but it does not know further

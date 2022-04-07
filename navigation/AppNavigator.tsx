@@ -2,6 +2,7 @@ import React from "react";
 import { NavigationContainer, DrawerActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer"; // Expected error, missing babel plugin
+
 import { Platform } from "react-native";
 
 import ProductOverviewScreen from "../screens/shop/ProductOverviewScreen";
@@ -15,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import UserProductScreen from "../screens/user/UserProductScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
+import AuthScreen from "../screens/user/AuthScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -102,7 +104,7 @@ const UserNavigator = () => {
   );
 };
 
-const AppNavigator = () => {
+const MainNavigator = () => {
   //Use this DrawerNavigator as the main navigator
   return (
     <Drawer.Navigator initialRouteName="Products">
@@ -182,6 +184,18 @@ const AppNavigator = () => {
         }}
       />
     </Drawer.Navigator>
+  );
+};
+
+const AppNavigator = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Auth"
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="Main" component={MainNavigator} />
+      <Stack.Screen name="Auth" component={AuthScreen} />
+    </Stack.Navigator>
   );
 };
 

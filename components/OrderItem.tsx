@@ -12,7 +12,7 @@ const OrderItem = (props: any) => {
       </View>
       <Button
         color={`lightgreen`}
-        title={ showDetails ? "Hide Details":"Show Details"}
+        title={showDetails ? "Hide Details" : "Show Details"}
         onPress={() => setShowDetails(!showDetails)}
       ></Button>
       <View>
@@ -20,7 +20,7 @@ const OrderItem = (props: any) => {
           ? props.items.map((item: any) => {
               return (
                 <CartItem
-                  key={`order-${item.id}`}
+                  key={`item-${item.productId.slice(0,6)}`}
                   title={item.productTitle}
                   quantity={item.quantity}
                   sum={item.sum}

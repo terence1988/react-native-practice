@@ -24,11 +24,11 @@ const store: Store = configureStore({
 });
 // This serializableCheck causes errors in the app. Not sure why it's even used
 // Avoid putting non-serializable values such as Promises, Symbols,
-// Maps/Sets, functions, or class instances into 
+// Maps/Sets, functions, or class instances into
 // the Redux store state or dispatched actions.
-// This ensures that capabilities such as debugging via the Redux DevTools 
+// This ensures that capabilities such as debugging via the Redux DevTools
 // will work as expected. It also ensures that the UI will update as expected.
-// probably the JSON.stringify() 
+// probably the JSON.stringify()
 
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -60,3 +60,6 @@ export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 //It's actually always any atm
+// EAS Build is a hosted service for building app binaries for your Expo and React Native projects.
+
+// It's actually like a side-loader app that you can install

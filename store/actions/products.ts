@@ -1,4 +1,4 @@
-import { baseProjectInfo, BaseUrl } from "../../constant";
+import { baseProjectInfo, BaseUrl, realTimeDB } from "../../constant";
 import Product from "../../models/product";
 import { IFormProps } from "../../screens/user/EditProductScreen";
 import { generateUUID } from "../../utils";
@@ -19,28 +19,42 @@ export const createProduct = (productData: IFormProps) => {
 
     //need different payload for firebase
 
-    const response = await fetch(
-      `${BaseUrl}${baseProjectInfo}/products?documentId=${generateUUID().slice(
-        0,
-        12
-      )}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fields: {
-            title: { stringValue: productData.title },
-            price: { doubleValue: productData.price },
-            imageUrl: { stringValue: productData.imageUrl },
-            description: { stringValue: productData.description },
-          },
-          createTime: new Date().toISOString(),
-          updateTime: new Date().toISOString(),
-        }),
-      }
-    );
+    // const response = await fetch(
+    //   `${BaseUrl}${baseProjectInfo}/products?documentId=${generateUUID().slice(
+    //     0,
+    //     12
+    //   )}`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       fields: {
+    //         title: { stringValue: productData.title },
+    //         price: { doubleValue: productData.price },
+    //         imageUrl: { stringValue: productData.imageUrl },
+    //         description: { stringValue: productData.description },
+    //       },
+    //       createTime: new Date().toISOString(),
+    //       updateTime: new Date().toISOString(),
+    //     }),
+    //   }
+    // ); // wrong DB service
+
+    const response = await fetch(`${realTimeDB}/products.json`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: productData.title,
+        price: Number(productData.price),
+        imageUrl: productData.imageUrl,
+        description: productData.description,
+      }),
+    });
+
     // {
     //   "fields":{
     //       "title":{"stringValue":"a shirt"},
@@ -58,9 +72,7 @@ export const createProduct = (productData: IFormProps) => {
 };
 
 export const fetchProducts = () => async (reduxDispatch: Function) => {
-  let response = await (
-    await fetch(`${BaseUrl}${baseProjectInfo}/products`)
-  ).json();
+  let response = await (await fetch(`${realTimeDB}/products.json`)).json();
   // Object {
   //   "createTime": "2022-04-04T04:15:38.733309Z",
   //   "fields": Object {
@@ -80,20 +92,27 @@ export const fetchProducts = () => async (reduxDispatch: Function) => {
   //   "name": "projects/rn-store-app-346200/databases/(default)/documents/products/7bf99dde-6a4d-4ab0-b546-61c5f62717fe",
   //   "updateTime": "2022-04-04T04:15:38.733309Z",
   // }
-
   let loadedProducts = [];
-  for (const key in response.documents) {
+  for (const key in response) {
     loadedProducts.push(
       new Product(
-        response.documents[key].name.split("/")[6],
+        key,
         "u1",
-        response.documents[key].fields.title.stringValue,
-        response.documents[key].fields.imageUrl.stringValue,
-        response.documents[key].fields.description.stringValue,
-        response.documents[key].fields.price.doubleValue
+        response[key].title,
+        response[key].imageUrl,
+        response[key].description,
+        Number(response[key].price)
       )
     );
   }
+  // Object {
+  //   "-MzwnguPw_AUsqq-UjO1": Object {
+  //     "description": "Represent the athletic spirit of adidas in this versatile t-shirt. Design details like the 3-Stripes sleeves and an embroidered adidas Badge of Sport give this tee a heritage sportswear vibe. The soft jersey fabric feels great for everyday wear, whether it's dinner with friends or a jog through the park.  This product is made with recycled content as part of our ambition to end plastic waste. Our cotton products support sustainable cotton farming. This is part of our ambition to end plastic waste. Product code 878202730",
+  //     "imageUrl": "https://cdn.pixabay.com/photo/2017/06/20/17/11/t-shirt-2423804_960_720.png",
+  //     "price": 22.99,
+  //     "title": "Blue Shirt",
+  //   },
+  // }
 
   return reduxDispatch({
     type: SET_PRODUCTS,
@@ -102,16 +121,36 @@ export const fetchProducts = () => async (reduxDispatch: Function) => {
 };
 
 export const updateProduct = (id: string, productData: IFormProps) => {
-  return {
-    type: UPDATE_PRODUCT,
-    pid: id,
-    productData,
+  return async (reduxDispatch: Function) => {
+    const response = await fetch(`${realTimeDB}/products/${id}.json`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: productData.title,
+        price: Number(productData.price),
+        imageUrl: productData.imageUrl,
+        description: productData.description,
+      }),
+    });
+
+    reduxDispatch({
+      type: UPDATE_PRODUCT,
+      pid: id,
+      productData,
+    });
   };
 };
 
 export const deleteProduct = (productId: string) => {
-  return {
-    type: DELETE_PRODUCT,
-    pid: productId,
+  return async (reduxDispatch: Function) => {
+    const response = await fetch(`${realTimeDB}/products/${productId}.json`, {
+      method: "DELETE",
+    });
+    reduxDispatch({
+      type: DELETE_PRODUCT,
+      pid: productId,
+    });
   };
 };

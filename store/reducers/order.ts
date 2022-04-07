@@ -11,7 +11,7 @@ export default (state = initialState, action: any) => {
   switch (action.type) {
     case ADD_ORDER:
       const newOrder = new Order(
-        Date.now().toString(),
+        action.orderData.id,
         action.orderData.items,
         action.orderData.amount,
         new Date()

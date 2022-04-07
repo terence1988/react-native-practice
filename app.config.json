@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "_internal": {
+      "isDebug": false,
+      "projectRoot": "C:\\GIT\\react-native-practice",
+      "dynamicConfigPath": null,
+      "staticConfigPath": null,
+      "packageJsonPath": "C:\\GIT\\react-native-practice\\package.json"
+    },
+    "name": "react-native-practice",
+    "slug": "react-native-practice",
+    "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "com.yourcompany.yourappname",
+      "versionCode": 1
+    }
+  }
+}
