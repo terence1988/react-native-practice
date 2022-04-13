@@ -1,4 +1,4 @@
-import { baseProjectInfo, BaseUrl, realTimeDB } from "../../constant";
+import { baseProjectInfo, BaseUrl, realTimeDB } from "../../constants";
 import Product from "../../models/product";
 import { IFormProps } from "../../screens/user/EditProductScreen";
 import { generateUUID } from "../../utils";

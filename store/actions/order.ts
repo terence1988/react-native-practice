@@ -1,4 +1,4 @@
-import { realTimeDB } from "../../constant";
+import { realTimeDB } from "../../constants";
 import Order from "../../models/order";
 import Product from "../../models/product";
 

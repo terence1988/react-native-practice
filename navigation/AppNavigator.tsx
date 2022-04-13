@@ -189,10 +189,7 @@ const MainNavigator = () => {
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="Auth"
-      screenOptions={{ headerShown: false }}
-    >
+    <Stack.Navigator initialRouteName="Auth" screenOptions={{headerShown:false}}>
       <Stack.Screen name="Main" component={MainNavigator} />
       <Stack.Screen name="Auth" component={AuthScreen} />
     </Stack.Navigator>
