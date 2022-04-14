@@ -1,9 +1,16 @@
-import React, { SetStateAction, useReducer, useCallback } from "react";
+import React, {
+  SetStateAction,
+  useReducer,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import {
   ScrollView,
   View,
   KeyboardAvoidingView,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -56,6 +63,8 @@ const formReducer = (state: IFormState, action: any) => {
 
 const AuthScreen = () => {
   const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState<string | unknown>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -69,6 +78,12 @@ const AuthScreen = () => {
     formIsValid: false,
   });
 
+  // useEffect(() => {
+  //   if (errorMessage) {
+  //     Alert.alert("An error!", errorMessage as string, [{ text: "Okay" }]);
+  //   }
+  // }, [errorMessage]);
+
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
       dispatchFormState({
@@ -81,13 +96,31 @@ const AuthScreen = () => {
     [dispatchFormState]
   );
 
+  // UI errors needs Error from actions
+
   const signupHandler = () => {
+    setIsLoading(true);
+
     dispatch(
       authActions.signup({
         email: formState.inputValues.email,
         password: formState.inputValues.password,
       })
     );
+    setIsLoading(false);
+  };
+
+  const loginHandler = () => {
+    setIsLoading(true);
+
+    dispatch(
+      authActions.signin({
+        email: formState.inputValues.email,
+        password: formState.inputValues.password,
+      })
+    );
+    setIsLoading(false);
+    //yeah the Error does not trigger catch block -- why and how to add it???
   };
 
   return (
@@ -124,7 +157,11 @@ const AuthScreen = () => {
                 initialValue=""
               />
               <View style={styles.btnContainer}>
-                <Button title="Login" onPress={() => {}} style={buttonStyle} />
+                <Button
+                  title="Login"
+                  onPress={loginHandler}
+                  style={buttonStyle}
+                />
                 <Button
                   title="Sign Up"
                   onPress={signupHandler}
