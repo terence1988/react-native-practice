@@ -5,12 +5,14 @@ interface IButton {
   onPress: () => void;
   title: string;
   style?: any;
+  disabled?: boolean;
 }
 
 export default function Button({
   onPress,
   title = "Button",
   style = {},
+  disabled,
 }: IButton) {
   const defaultStyles = {
     button: {
@@ -40,7 +42,7 @@ export default function Button({
   });
 
   return (
-    <Pressable style={_styles.button} onPress={onPress}>
+    <Pressable style={_styles.button} disabled={disabled} onPress={onPress}>
       <Text style={_styles.text}>{title}</Text>
     </Pressable>
   );

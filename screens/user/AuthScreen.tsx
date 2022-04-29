@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -61,7 +62,7 @@ const formReducer = (state: IFormState, action: any) => {
   return state;
 };
 
-const AuthScreen = () => {
+const AuthScreen = (props) => {
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState<string | unknown>();
   const [isLoading, setIsLoading] = useState(false);
@@ -98,28 +99,37 @@ const AuthScreen = () => {
 
   // UI errors needs Error from actions
 
-  const signupHandler = () => {
+  const signupHandler = async () => {
     setIsLoading(true);
-
-    dispatch(
-      authActions.signup({
-        email: formState.inputValues.email,
-        password: formState.inputValues.password,
-      })
-    );
-    setIsLoading(false);
+    try {
+      await dispatch(
+        authActions.signup({
+          email: formState.inputValues.email,
+          password: formState.inputValues.password,
+        })
+      );
+      props.navigation.navigate("Main");
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
   };
 
-  const loginHandler = () => {
+  const loginHandler = async () => {
     setIsLoading(true);
+    try {
+      await dispatch(
+        authActions.signin({
+          email: formState.inputValues.email,
+          password: formState.inputValues.password,
+        })
+      );
+      props.navigation.navigate("Main");
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+    }
 
-    dispatch(
-      authActions.signin({
-        email: formState.inputValues.email,
-        password: formState.inputValues.password,
-      })
-    );
-    setIsLoading(false);
     //yeah the Error does not trigger catch block -- why and how to add it???
   };
 
@@ -156,18 +166,24 @@ const AuthScreen = () => {
                 onInputChange={inputChangeHandler}
                 initialValue=""
               />
-              <View style={styles.btnContainer}>
-                <Button
-                  title="Login"
-                  onPress={loginHandler}
-                  style={buttonStyle}
-                />
-                <Button
-                  title="Sign Up"
-                  onPress={signupHandler}
-                  style={buttonStyle}
-                />
-              </View>
+              {isLoading ? (
+                <ActivityIndicator />
+              ) : (
+                <View style={styles.btnContainer}>
+                  <Button
+                    title="Login"
+                    onPress={loginHandler}
+                    style={buttonStyle}
+                    disabled={!formState.formIsValid}
+                  />
+                  <Button
+                    title="Sign Up"
+                    onPress={signupHandler}
+                    style={buttonStyle}
+                    disabled={!formState.formIsValid}
+                  />
+                </View>
+              )}
             </ScrollView>
           </View>
         </KeyboardAvoidingView>

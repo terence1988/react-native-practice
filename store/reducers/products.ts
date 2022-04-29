@@ -15,8 +15,8 @@ interface ProductInitialState {
 }
 
 const initialState: ProductInitialState = {
-  availableProducts: PRODUCTS, // stocks
-  userProducts: PRODUCTS.filter((product) => product.ownerId === "u1"), //selected products
+  availableProducts: [], // stocks
+  userProducts: [], //selected products
 };
 
 export default (state = initialState, action: any) => {
@@ -24,14 +24,12 @@ export default (state = initialState, action: any) => {
     case SET_PRODUCTS:
       return {
         availableProducts: action.products,
-        userProducts: action.products.filter(
-          (product: Product) => product.ownerId === "u1"
-        ),
+        userProducts: action.userProducts,
       };
     case CREATE_PRODUCT:
       const product = new Product(
-        new Date().toString(),
-        "u1",
+        action.productData.productId,
+        action.productData.ownerId,
         action.productData.title,
         action.productData.imageUrl,
         action.productData.description,

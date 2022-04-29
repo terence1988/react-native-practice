@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import UserProductScreen from "../screens/user/UserProductScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import AuthScreen from "../screens/user/AuthScreen";
+import StartUpScreen from "../screens/StartUpScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -189,9 +190,10 @@ const MainNavigator = () => {
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Auth" screenOptions={{headerShown:false}}>
+    <Stack.Navigator initialRouteName="StartUp" screenOptions={{headerShown:false}}>
       <Stack.Screen name="Main" component={MainNavigator} />
       <Stack.Screen name="Auth" component={AuthScreen} />
+      <Stack.Screen name="StartUp" component={StartUpScreen} />
     </Stack.Navigator>
   );
 };

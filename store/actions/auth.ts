@@ -1,4 +1,5 @@
 import { firebaseKEY } from "../../constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const SIGN_UP = "SIGN_UP";
 export const SIGN_IN = "SIGN_IN";
@@ -28,7 +29,6 @@ export const signup = ({ email, password }: credential) => {
         }),
       }
     ); // wtf - key has a return
-    console.log("response:OK", response.ok);
 
     if (!response.ok) {
       let message = "Something went wrong";
@@ -50,12 +50,17 @@ export const signup = ({ email, password }: credential) => {
       // Note that despite the method being named json(), the result is not JSON
       // but is instead the result of taking JSON as input and
       // parsing it to produce a JavaScript object.
-
-      console.log(resData);
+      // It's in Auth -- Don't forget
 
       reduxThunkDispatch({
         type: SIGN_UP,
+        token: resData.idToken,
+        userId: resData.localId,
       });
+      const expirationDate = new Date(
+        new Date().getTime() + Number(resData.expiresIn) * 1000
+      );
+      saveDataToStorage(resData.idToken, resData.localId, expirationDate);
     }
   };
 };
@@ -92,13 +97,41 @@ export const signin = ({ email, password }: credential) => {
       }
       throw new Error(message);
     } else {
+      const resData = await response.json();
       reduxThunkDispatch({
         type: SIGN_IN,
+        token: resData.idToken,
+        userId: resData.localId,
       });
-
+      const expirationDate = new Date(
+        new Date().getTime() + Number(resData.expiresIn) * 1000
+      );
+      saveDataToStorage(resData.idToken, resData.localId, expirationDate);
       // [Unhandled promise rejection: Error: Email not found]
       // at node_modules\regenerator-runtime\runtime.js:63:36 in tryCatch
       // at node_modules\regenerator-runtime\runtime.js:294:29 in invoke
+
+      // Object {
+      //   "displayName": "",
+      //   "email": "awstest1111@gmail.com",
+      //   "expiresIn": "3600",
+      //   "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM2NzNkM2M5NDdhZWIxOGI2NGU1OGUzZWRlMzI1NWZiZjU3NTI4NWIiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vcm4tc3RvcmUtYXBwLTM0NjIwMCIsImF1ZCI6InJuLXN0b3JlLWFwcC0zNDYyMDAiLCJhdXRoX3RpbWUiOjE2NTExMTAyOTMsInVzZXJfaWQiOiJLSFBFWVZKbkJOY0h3VFJpM2dMaEp6Y0JDUGMyIiwic3ViIjoiS0hQRVlWSm5CTmNId1RSaTNnTGhKemNCQ1BjMiIsImlhdCI6MTY1MTExMDI5MywiZXhwIjoxNjUxMTEzODkzLCJlbWFpbCI6ImF3c3Rlc3QxMTExQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhd3N0ZXN0MTExMUBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.hA81kiTR2aIJiJMqo1CSaJNqH7d0rcGM0AiXsetM_8ASpN4V3lfujQ4OaFjJDtZ5lDSYPdtYsRxWDvuYLd63_6pYomJ1aka_Ew_4a8DeoN9fVXIskPUtX_YfP7FNu_PBJIB71-2pA_ArKeqoerlFaK7q1Kved-OQRu4D3HSPbwGAd0rHmsP_ukEWzh22OVL5evZrPQNIHcQg-mcs4BhyoI4XTi6NNm3Jba2BqtrMRlnOfin8dQZNFfGRftCVHnq_GClCupw-tVsmTxZAY4bpUK9Co_h6TkvORPcppRbF-oXjLlHI-J_FYP8cdMZ7BB20ycSg4qiYca7MTAScvw6Dcw",
+      //   "kind": "identitytoolkit#VerifyPasswordResponse",
+      //   "localId": "KHPEYVJnBNcHwTRi3gLhJzcBCPc2",
+      //   "refreshToken": "AIwUaOnFWzSAYGF6mRoHoln9a5NitqfLq-crDo0tD1C2nazChPILRZFiig7DNiuc1k8265LljNK0D24003KD_DRh44fUwHpTdbHLJtHI2cqXBc9Lthim9Ae18HhtW7hopoiIGgUTvTUMApuyWT6FhDnwTYyXnyzjBDIVK8KCRtSe4TweoJndq3N5m5azFJ1FT8h54IBq0B_ZCqKX0xuF1nyk9bABwgSB_vlDWZCj77TeGXWrdZIrsPg",
+      //   "registered": true,
+      // }
     }
   };
+};
+
+const saveDataToStorage = (token: string, userId: string, expiresAt: Date) => {
+  AsyncStorage.setItem(
+    "userData",
+    JSON.stringify({
+      token,
+      userId,
+      expiresAt: expiresAt.toISOString(),
+    })
+  );
 };

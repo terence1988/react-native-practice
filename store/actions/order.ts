@@ -6,10 +6,12 @@ export const ADD_ORDER = "ADD_ORDER";
 export const SET_ORDERS = "SET_ORDERS";
 
 export const addOrder = (cartItems: Product[], totalAmount: number) => {
-  return async (reduxThunkDispatch: Function) => {
+  return async (reduxThunkDispatch: Function,getState:Function) => {
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
     const dateData = new Date(); // async could have mismatch in date
     const response = await (
-      await fetch(`${realTimeDB}/orders/u1.json`, {
+      await fetch(`${realTimeDB}/orders/${userId}.json?auth=${token}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,8 +34,9 @@ export const addOrder = (cartItems: Product[], totalAmount: number) => {
 };
 
 export const fetchOrders = () => {
-  return async (reduxThunkDispatch: Function) => {
-    const resData = await (await fetch(`${realTimeDB}/orders/u1.json`)).json();
+  return async (reduxThunkDispatch: Function,getState:Function) => {
+    const userId = getState().auth.userId;
+    const resData = await (await fetch(`${realTimeDB}/orders/${userId}.json`)).json();
     let loadedOrders = [];
     for (const key in resData) {
       loadedOrders.push(
