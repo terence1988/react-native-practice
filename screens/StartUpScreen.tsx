@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
+import * as authActions from "../store/actions/auth";
 import { SIGN_IN } from "../store/actions/auth";
 
 interface UserData {
@@ -12,26 +13,15 @@ interface UserData {
 
 const StartUpScreen = (props: any) => {
   const { getItem, setItem } = useAsyncStorage("userData");
-  const [user, setUser] = useState<UserData>();
+
   const dispatch = useDispatch();
 
   const readItemfromStraorage = async () => {
-    const userData = await getItem().then((res) =>
-      res ? JSON.parse(res) : null
-    );
-    setUser(userData);
-  };
-
-  useEffect(() => {
-    readItemfromStraorage();
+    const user = await getItem().then((res) => JSON.parse(res as string));
 
     if (!user || !user.token || !user.userId) {
       props.navigation.navigate("Auth");
     }
-
-    // if (user) {
-    //   console.log(new Date().toISOString() < user.expiresAt);
-    // }
 
     if (user && user.expiresAt && new Date().toISOString() >= user.expiresAt) {
       //it can be done directly -- good2know
@@ -39,13 +29,17 @@ const StartUpScreen = (props: any) => {
     }
 
     if (user) {
-      props.navigation.navigate("Main");
       dispatch({
         type: SIGN_IN,
         userId: user.userId,
         token: user.token,
       });
+      props.navigation.navigate("Main");
     }
+  };
+
+  useEffect(() => {
+    readItemfromStraorage();
   }, []);
 
   return (

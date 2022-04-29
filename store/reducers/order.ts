@@ -1,4 +1,4 @@
-import { ADD_ORDER } from "../actions/order";
+import { ADD_ORDER, SET_ORDERS } from "../actions/order";
 import Order from "../../models/order";
 
 const initialState: {
@@ -14,12 +14,17 @@ export default (state = initialState, action: any) => {
         action.orderData.id,
         action.orderData.items,
         action.orderData.amount,
-        new Date()
+        action.orderData.date
       );
       return {
         ...state,
         // return new array of orders -- spread operator can be used to add new order to existing array as well
         orders: state.orders.concat(newOrder),
+      };
+    case SET_ORDERS:
+      return {
+        ...state,
+        orders: action.orders,
       };
     default:
       return { ...state };

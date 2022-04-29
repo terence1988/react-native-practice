@@ -1,18 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Text } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import OrderItem from "../../components/OrderItem";
+import Order from "../../models/order";
+import * as orderActions from "../../store/actions/order";
 
-interface IOrder {
-  date: Date;
-  id: string;
-  items: any; //IProduct[];
-  totalAmount: number;
-  readableDate: string;
-}
+// interface IOrder {
+//   date: Date;
+//   id: string;
+//   items: any; //IProduct[];
+//   totalAmount: number;
+//   readableDate: () => string;
+// }
 
 const OrdersScreen = () => {
-  const orders: IOrder[] = useSelector((state: any) => state.orders.orders); // []
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    dispatch(orderActions.fetchOrders());
+    setIsLoading(false);
+  }, [dispatch]);
+
+  const orders: Order[] = useSelector((state: any) => {
+    //console.log(state.orders.orders);
+    return state.orders.orders;
+  });
   // Array [
   //   Order {
   //     "date": 2022-03-23T03:09:12.335Z,
@@ -30,7 +43,7 @@ const OrdersScreen = () => {
   //   },
   // ]
   // Date.toLocaleDateString() is not available on Android RN
-  return orders.length > 0 ? (
+  return orders.length > 0 && !isLoading ? (
     <FlatList
       data={orders}
       keyExtractor={(item) => item.id}

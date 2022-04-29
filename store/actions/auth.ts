@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const SIGN_UP = "SIGN_UP";
 export const SIGN_IN = "SIGN_IN";
+export const LOG_OUT = "LOG_OUT";
 
 type credential = {
   email: string;
@@ -52,15 +53,16 @@ export const signup = ({ email, password }: credential) => {
       // parsing it to produce a JavaScript object.
       // It's in Auth -- Don't forget
 
+      const expirationDate = new Date(
+        new Date().getTime() + Number(resData.expiresIn) * 1000
+      );
+      saveDataToStorage(resData.idToken, resData.localId, expirationDate);
+
       reduxThunkDispatch({
         type: SIGN_UP,
         token: resData.idToken,
         userId: resData.localId,
       });
-      const expirationDate = new Date(
-        new Date().getTime() + Number(resData.expiresIn) * 1000
-      );
-      saveDataToStorage(resData.idToken, resData.localId, expirationDate);
     }
   };
 };
@@ -98,15 +100,18 @@ export const signin = ({ email, password }: credential) => {
       throw new Error(message);
     } else {
       const resData = await response.json();
+
+      const expirationDate = new Date(
+        new Date().getTime() + Number(resData.expiresIn) * 1000
+      );
+      saveDataToStorage(resData.idToken, resData.localId, expirationDate);
+
       reduxThunkDispatch({
         type: SIGN_IN,
         token: resData.idToken,
         userId: resData.localId,
       });
-      const expirationDate = new Date(
-        new Date().getTime() + Number(resData.expiresIn) * 1000
-      );
-      saveDataToStorage(resData.idToken, resData.localId, expirationDate);
+
       // [Unhandled promise rejection: Error: Email not found]
       // at node_modules\regenerator-runtime\runtime.js:63:36 in tryCatch
       // at node_modules\regenerator-runtime\runtime.js:294:29 in invoke
@@ -124,6 +129,14 @@ export const signin = ({ email, password }: credential) => {
     }
   };
 };
+
+export const logout = () => {
+
+  return {
+    type: LOG_OUT
+  }
+}
+
 
 const saveDataToStorage = (token: string, userId: string, expiresAt: Date) => {
   AsyncStorage.setItem(

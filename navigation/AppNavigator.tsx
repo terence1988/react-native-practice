@@ -1,7 +1,12 @@
 import React from "react";
 import { NavigationContainer, DrawerActions } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer"; // Expected error, missing babel plugin
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
+  DrawerItemList,
+} from "@react-navigation/drawer"; // Expected error, missing babel plugin
 
 import { Platform } from "react-native";
 
@@ -18,6 +23,8 @@ import UserProductScreen from "../screens/user/UserProductScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import AuthScreen from "../screens/user/AuthScreen";
 import StartUpScreen from "../screens/StartUpScreen";
+import { useDispatch } from "react-redux";
+import * as authActions from "../store/actions/auth";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -107,8 +114,37 @@ const UserNavigator = () => {
 
 const MainNavigator = () => {
   //Use this DrawerNavigator as the main navigator
+  const dispatch = useDispatch();
   return (
-    <Drawer.Navigator initialRouteName="Products">
+    <Drawer.Navigator
+      initialRouteName="Products"
+      drawerContent={(props) => {
+        // append the item at the bottom of the API-exposed list
+        return (
+          <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+            <DrawerItem
+              labelStyle={{
+                fontSize: 14,
+              }}
+              label="Logout"
+              icon={({ focused, color, size }) => (
+                <Ionicons
+                  name={
+                    Platform.OS === "android" ? "md-log-out" : "ios-log-out"
+                  }
+                  size={24}
+                  color={focused ? "green" : "lightblue"}
+                />
+              )}
+              onPress={() => {
+                dispatch(authActions.logout());
+              }}
+            />
+          </DrawerContentScrollView>
+        );
+      }}
+    >
       <Drawer.Screen
         name="Orders"
         component={OrdersScreen}
@@ -190,7 +226,10 @@ const MainNavigator = () => {
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="StartUp" screenOptions={{headerShown:false}}>
+    <Stack.Navigator
+      initialRouteName="StartUp"
+      screenOptions={{ headerShown: false }}
+    >
       <Stack.Screen name="Main" component={MainNavigator} />
       <Stack.Screen name="Auth" component={AuthScreen} />
       <Stack.Screen name="StartUp" component={StartUpScreen} />
