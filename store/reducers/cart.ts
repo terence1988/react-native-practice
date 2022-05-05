@@ -5,7 +5,7 @@ import {
   removeFromCart,
 } from "../actions/cart";
 import CartItem from "../../models/cart-item";
-import { ADD_ORDER } from "../actions/order";
+import { ADD_ORDER } from "../actions/orders";
 import { DELETE_PRODUCT } from "../actions/products";
 
 const initialState: {

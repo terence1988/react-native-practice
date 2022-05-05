@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { combineReducers, Store } from "redux";
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart";
-import orderReducer from "./store/reducers/order";
+import orderReducer from "./store/reducers/orders";
 import authReducer from "./store/reducers/auth";
+import placesReducer from "./store/reducers/places";
 import AppNavigation from "./navigation/AppNavigator";
 
 const rootReducer = combineReducers({
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   orders: orderReducer,
   auth: authReducer,
+  places: placesReducer,
 });
 
 const store: Store = configureStore({

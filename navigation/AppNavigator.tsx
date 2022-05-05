@@ -8,7 +8,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer"; // Expected error, missing babel plugin
 
-import { Platform } from "react-native";
+import { Platform, View, Text } from "react-native";
 
 import ProductOverviewScreen from "../screens/shop/ProductOverviewScreen";
 import ProductDetailsScreen from "../screens/shop/ProductDetailsScreen";
@@ -23,8 +23,11 @@ import UserProductScreen from "../screens/user/UserProductScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import AuthScreen from "../screens/user/AuthScreen";
 import StartUpScreen from "../screens/StartUpScreen";
+import MapScreen from "../screens/Map/MapScreen";
 import { useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
+import AddPlaceScreen from "../screens/Map/AddPlaceScreen";
+import ShowMapScreen from "../screens/Map/MapScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -112,12 +115,25 @@ const UserNavigator = () => {
   );
 };
 
+const MapNavigator = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Show Map"
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="Show Map" component={ShowMapScreen} />
+      <Stack.Screen name="Add Place" component={AddPlaceScreen} />
+    </Stack.Navigator>
+  );
+};
+
 const MainNavigator = () => {
   //Use this DrawerNavigator as the main navigator
   const dispatch = useDispatch();
   return (
     <Drawer.Navigator
       initialRouteName="Products"
+      defaultStatus="closed"
       drawerContent={(props) => {
         // append the item at the bottom of the API-exposed list
         return (
@@ -139,6 +155,8 @@ const MainNavigator = () => {
               )}
               onPress={() => {
                 dispatch(authActions.logout());
+                const { navigation } = props; // if not sure, just destructure it
+                navigation.navigate("Auth");
               }}
             />
           </DrawerContentScrollView>
@@ -220,9 +238,40 @@ const MainNavigator = () => {
           };
         }}
       />
+      <Drawer.Screen
+        name="Map"
+        component={MapNavigator}
+        options={({ navigation, route }) => {
+          return {
+            headerTitle: "All Places",
+            drawerIcon: (drawerConfig) => {
+              return (
+                <Ionicons
+                  name={Platform.OS === "android" ? "md-map" : "ios-map"}
+                  size={23}
+                  color={drawerConfig.focused ? "green" : "lightblue"}
+                />
+              );
+            },
+            headerRight: () => (
+              <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                  title="Add Place"
+                  iconName={Platform.OS === "android" ? "md-add" : "ios-add"}
+                  onPress={() => {
+                    //console.log("Add Place");
+                    navigation.navigate(`Add Place`);
+                  }}
+                />
+              </HeaderButtons>
+            ),
+          };
+        }}
+      />
     </Drawer.Navigator>
   );
 };
+// easier to use default closed()
 
 const AppNavigator = () => {
   return (

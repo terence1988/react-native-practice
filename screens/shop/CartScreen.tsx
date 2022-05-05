@@ -11,7 +11,7 @@ import {
 
 import CartItem from "../../components/CartItem";
 import * as cartAction from "../../store/actions/cart";
-import * as ordersAction from "../../store/actions/order";
+import * as ordersAction from "../../store/actions/orders";
 
 const CartScreen = () => {
   const cartTotalAmount = useSelector((state: any) => state.cart.totalAmount);

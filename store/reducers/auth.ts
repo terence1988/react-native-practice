@@ -8,7 +8,7 @@ const initialState: {
 };
 
 export default (state = initialState, action: any) => {
-  // KHPEYVJnBNcHwTRi3gLhJzcBCPc2 -- userId
+  // zzzzzzzzzzzzzzzJzcBCPc2 -- userId
   switch (action.type) {
     case SIGN_UP:
       return {
@@ -20,9 +20,7 @@ export default (state = initialState, action: any) => {
       return { ...state, token: action.token, userId: action.userId };
     case LOG_OUT:
       return {
-        ...state,
-        token: "",
-        userId: "",
+        ...initialState,
       };
     default:
       return { ...state };

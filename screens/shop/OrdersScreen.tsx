@@ -3,7 +3,7 @@ import { FlatList, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import OrderItem from "../../components/OrderItem";
 import Order from "../../models/order";
-import * as orderActions from "../../store/actions/order";
+import * as orderActions from "../../store/actions/orders";
 
 // interface IOrder {
 //   date: Date;
