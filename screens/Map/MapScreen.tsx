@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../App";
 
 const ShowMapScreen = () => {
-  const places = useSelector((state: RootState) => state.places);
+  const places = useSelector((state: RootState) => state.places.places);
 
   useEffect(() => {
     console.log(places);
