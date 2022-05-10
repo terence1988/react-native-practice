@@ -1,22 +1,29 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import Button from "../../components/UI/Button";
 import * as placeActions from "../../store/actions/places";
 import { useNavigation } from "@react-navigation/native";
+import ImagePicker from "../../components/ImagePicker";
+import { ImageInfo } from "expo-image-picker";
 
 const AddPlaceScreen = () => {
   const [title, setTitle] = useState("");
+  const [rawImage, setRawImage] = useState<ImageInfo | undefined>();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const titleOnChangeHandler = (val: string) => {
-    setTitle(val);
+  const titleOnChangeHandler = (value: string) => {
+    setTitle(value);
+  };
+
+  const imageHandler = (image: ImageInfo) => {
+    setRawImage(image);
   };
 
   const savePlaceHandler = () => {
-    dispatch(placeActions.addPlace(title));
+    dispatch(placeActions.addPlace(title,rawImage?.uri));
     navigation.goBack();
   };
 
@@ -30,6 +37,7 @@ const AddPlaceScreen = () => {
           onChangeText={titleOnChangeHandler}
         />
       </View>
+      <ImagePicker onSelectImage={imageHandler} image={rawImage} />
       <Button
         title={`Save Place`}
         onPress={savePlaceHandler}

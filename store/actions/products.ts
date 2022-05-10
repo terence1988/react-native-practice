@@ -12,7 +12,7 @@ export const createProduct = (productData: IFormProps) => {
   return async (reduxDispatch: Function, getState: Function) => {
     const authToken = getState().auth.token;
     const userId = getState().auth.userId;
-    if (!userId) return
+    if (!userId) return;
     // await fetch(`${BaseUrl}${baseProjectInfo}/users`)
     //   .then((res) => res.json())
     //   .then((res) => {
@@ -71,8 +71,7 @@ export const createProduct = (productData: IFormProps) => {
     //   "updateTime":"2022-04-04T03:11:14.898Z"
     // }
     const resData = await response.json();
-    console.log(resData);
-
+  
     return reduxDispatch({
       type: CREATE_PRODUCT,
       productData: { ...productData, ownerId: userId },

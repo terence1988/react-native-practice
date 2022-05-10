@@ -28,6 +28,7 @@ import { useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
 import AddPlaceScreen from "../screens/Map/AddPlaceScreen";
 import ShowMapScreen from "../screens/Map/MapScreen";
+import PlaceDetailScreen from "../screens/Map/PlaceDetailScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -105,11 +106,12 @@ const ProductNavigator = () => {
 
 const UserNavigator = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="User Product"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="User Product" component={UserProductScreen} />
+    <Stack.Navigator initialRouteName="User Product">
+      <Stack.Screen
+        name="User Product"
+        component={UserProductScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Edit Product" component={EditProductScreen} />
     </Stack.Navigator>
   );
@@ -123,6 +125,7 @@ const MapNavigator = () => {
     >
       <Stack.Screen name="Show Map" component={ShowMapScreen} />
       <Stack.Screen name="Add Place" component={AddPlaceScreen} />
+      <Stack.Screen name="Place Details" component={PlaceDetailScreen} />
     </Stack.Navigator>
   );
 };
@@ -243,7 +246,6 @@ const MainNavigator = () => {
         component={MapNavigator}
         options={({ navigation, route }) => {
           return {
-            headerTitle: "All Places",
             drawerIcon: (drawerConfig) => {
               return (
                 <Ionicons
