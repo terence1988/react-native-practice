@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { combineReducers, Store } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
+import { init } from "./helpers/db";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import productsReducer from "./store/reducers/products";
@@ -10,6 +11,14 @@ import orderReducer from "./store/reducers/orders";
 import authReducer from "./store/reducers/auth";
 import placesReducer from "./store/reducers/places";
 import AppNavigation from "./navigation/AppNavigator";
+
+init()
+  .then(() => {
+    console.log("DB initialized");
+  })
+  .catch(() => {
+    console.log("DB initialization failed");
+  });
 
 const rootReducer = combineReducers({
   products: productsReducer,

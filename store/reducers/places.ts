@@ -11,7 +11,11 @@ const initialState: {
 export default (state = initialState, action: any) => {
   switch (action.type) {
     case ADD_PLACE:
-      const newPlace = new Place(action.placeData.id, action.placeData.title,action.placeData.imageUri);
+      const newPlace = new Place(
+        action.placeData.id,
+        action.placeData.title,
+        action.placeData.imageUri
+      );
       return {
         ...state,
         places: state.places.concat(newPlace),
@@ -21,7 +25,7 @@ export default (state = initialState, action: any) => {
       return {
         ...state,
         places: action.placesData.map(
-          (place: any) => new Place(place.id, place.title)
+          (place: any) => new Place(place.id, place.title, place.imageUri)
         ),
       };
     default:

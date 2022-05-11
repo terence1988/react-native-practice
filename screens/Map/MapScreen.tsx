@@ -9,7 +9,7 @@ const ShowMapScreen = ({ navigation }: any) => {
   const places = useSelector((state: RootState) => state.places.places);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(placeActions.fetchPlaces());
+    dispatch(placeActions.loadPlaces());
   }, []);
   console.log(places);
   return (
