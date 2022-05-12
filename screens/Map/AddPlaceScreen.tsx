@@ -6,6 +6,7 @@ import Button from "../../components/UI/Button";
 import * as placeActions from "../../store/actions/places";
 import { useNavigation } from "@react-navigation/native";
 import ImagePicker from "../../components/ImagePicker";
+import LocationPicker from "../../components/LocationPicker";
 import { ImageInfo } from "expo-image-picker";
 
 const AddPlaceScreen = () => {
@@ -38,6 +39,7 @@ const AddPlaceScreen = () => {
         />
       </View>
       <ImagePicker onSelectImage={imageHandler} image={rawImage} />
+      <LocationPicker />
       <Button
         title={`Save Place`}
         onPress={savePlaceHandler}

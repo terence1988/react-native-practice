@@ -27,7 +27,6 @@ export const addPlace = (title: string, imageUri?: string) => {
           10.5,
           10.5
         );
-        console.log(dbResult);
         return reduxDispatch({
           type: ADD_PLACE,
           placeData: {
@@ -80,7 +79,6 @@ export const fetchPlaces = () => {
 export const loadPlaces = () => {
   return async (reduxDispatch: Function) => {
     const sqlResult = await queryPlaces(); // it's an object :/
-    console.log(sqlResult);
     return reduxDispatch({
       type: FETCH_PLACES,
       placesData: (sqlResult as SQLResultSet).rows._array,

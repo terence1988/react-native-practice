@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import * as authActions from "../store/actions/auth";
+import { useDispatch, useSelector } from "react-redux";
 import { SIGN_IN } from "../store/actions/auth";
 
 interface UserData {
@@ -13,13 +12,16 @@ interface UserData {
 
 const StartUpScreen = (props: any) => {
   const { getItem, setItem } = useAsyncStorage("userData");
-
+  const [user, setUser] = useState<UserData>();
   const dispatch = useDispatch();
+  const auth = useSelector((state: any) => state.auth);
 
-  const readItemfromStraorage = async () => {
-    const user = await getItem().then((res) => JSON.parse(res as string));
-
-    if (!user || !user.token || !user.userId) {
+  const readItemfromStorage = async () => {
+    const cachedUser = await getItem().then((res) => JSON.parse(res as string));
+    if (cachedUser) {
+      setUser(cachedUser);
+    }
+    if (!user && !auth) {
       props.navigation.navigate("Auth");
     }
 
@@ -34,12 +36,15 @@ const StartUpScreen = (props: any) => {
         userId: user.userId,
         token: user.token,
       });
+
       props.navigation.navigate("Main");
     }
+    // dispatch to store directly
   };
 
   useEffect(() => {
-    readItemfromStraorage();
+    console.log(`trigged one times`);
+    readItemfromStorage();
   }, []);
 
   return (
@@ -66,3 +71,5 @@ export default StartUpScreen;
 //   }
 
 // This string can be compared :\ ?
+
+// this screen get stuck when go back to here from other navigator

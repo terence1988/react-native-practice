@@ -23,12 +23,12 @@ import UserProductScreen from "../screens/user/UserProductScreen";
 import EditProductScreen from "../screens/user/EditProductScreen";
 import AuthScreen from "../screens/user/AuthScreen";
 import StartUpScreen from "../screens/StartUpScreen";
-import MapScreen from "../screens/Map/MapScreen";
 import { useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
 import AddPlaceScreen from "../screens/Map/AddPlaceScreen";
 import ShowMapScreen from "../screens/Map/MapScreen";
 import PlaceDetailScreen from "../screens/Map/PlaceDetailScreen";
+import MapPicker from "../components/MapPicker";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -121,11 +121,43 @@ const MapNavigator = () => {
   return (
     <Stack.Navigator
       initialRouteName="Show Map"
-      screenOptions={{ headerShown: false }}
+      screenOptions={({ navigation, route }) => {
+        return {
+          headerRight: () => (
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+              <Item
+                title="Add Place"
+                iconName={Platform.OS === "android" ? "md-add" : "ios-add"}
+                onPress={() => {
+                  //console.log("Add Place");
+                  navigation.navigate(`Add Place`);
+                }}
+              />
+            </HeaderButtons>
+          ),
+        };
+      }}
     >
-      <Stack.Screen name="Show Map" component={ShowMapScreen} />
-      <Stack.Screen name="Add Place" component={AddPlaceScreen} />
-      <Stack.Screen name="Place Details" component={PlaceDetailScreen} />
+      <Stack.Screen
+        name="Show Map"
+        component={ShowMapScreen}
+        options={{ title: "All Places" }}
+      />
+      <Stack.Screen
+        name="Add Place"
+        component={AddPlaceScreen}
+        options={{ title: "Add new Place" }}
+      />
+      <Stack.Screen
+        name="Place Details"
+        component={PlaceDetailScreen}
+        options={{ title: "A Place" }}
+      />
+      <Stack.Screen
+        name="Pick a location"
+        component={MapPicker}
+        options={{ title: "Drop a pin" }}
+      />
     </Stack.Navigator>
   );
 };
@@ -244,8 +276,9 @@ const MainNavigator = () => {
       <Drawer.Screen
         name="Map"
         component={MapNavigator}
-        options={({ navigation, route }) => {
+        options={() => {
           return {
+            headerShown: false,
             drawerIcon: (drawerConfig) => {
               return (
                 <Ionicons
@@ -255,18 +288,6 @@ const MainNavigator = () => {
                 />
               );
             },
-            headerRight: () => (
-              <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                <Item
-                  title="Add Place"
-                  iconName={Platform.OS === "android" ? "md-add" : "ios-add"}
-                  onPress={() => {
-                    //console.log("Add Place");
-                    navigation.navigate(`Add Place`);
-                  }}
-                />
-              </HeaderButtons>
-            ),
           };
         }}
       />
@@ -280,6 +301,15 @@ const AppNavigator = () => {
     <Stack.Navigator
       initialRouteName="StartUp"
       screenOptions={{ headerShown: false }}
+      screenListeners={{
+        state: (e) => {
+          console.log(
+            "state changed",
+            new Date().toISOString().slice(0, 16),
+            e.data
+          );
+        },
+      }}
     >
       <Stack.Screen name="Main" component={MainNavigator} />
       <Stack.Screen name="Auth" component={AuthScreen} />
