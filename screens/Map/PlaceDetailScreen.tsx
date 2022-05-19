@@ -1,10 +1,6 @@
-import {
-  ParamListBase,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, Route, Button } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const PlaceDetailScreen = () => {

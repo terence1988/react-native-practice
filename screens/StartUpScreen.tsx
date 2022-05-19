@@ -20,6 +20,7 @@ const StartUpScreen = (props: any) => {
     const cachedUser = await getItem().then((res) => JSON.parse(res as string));
     if (cachedUser) {
       setUser(cachedUser);
+      props.navigation.navigate("Main");
     }
     if (!user && !auth) {
       props.navigation.navigate("Auth");
@@ -43,7 +44,6 @@ const StartUpScreen = (props: any) => {
   };
 
   useEffect(() => {
-    console.log(`trigged one times`);
     readItemfromStorage();
   }, []);
 
@@ -72,4 +72,4 @@ export default StartUpScreen;
 
 // This string can be compared :\ ?
 
-// this screen get stuck when go back to here from other navigator
+// this screen get stuck when go back to here from other navigator :?

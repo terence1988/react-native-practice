@@ -1,33 +1,38 @@
 import React from "react";
-import { Image, StyleSheet, View, Text } from "react-native";
+import { TouchableOpacity, Image, StyleSheet } from "react-native";
+
 import { GoogleAPIKey } from "../constants";
 
-interface MapPreviewProps {
-  location: { lat: number; lng: number };
-  [key: string]: any;
-}
+const MapPreview = (props: any) => {
+  let imagePreviewUrl;
 
-const MapPreview = (props: MapPreviewProps) => {
-  const mapImageUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${props.location.lat},${props.location.lng}&zoom=14&size=400x200&maptype=roadmap&markers=color:blue%7Clabel:A%7C${props.location.lat},${props.location.lng}&key=${GoogleAPIKey}`;
+  if (props.location) {
+    imagePreviewUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${props.location.lat},${props.location.lng}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:A%7C${props.location.lat},${props.location.lng}&key=${GoogleAPIKey}`;
+  }
 
   return (
-    <View>
-      <Image
-        style={{ ...props.style, ...styles.mapImage }}
-        source={{ uri: mapImageUrl }}
-      />
-    </View>
+    <TouchableOpacity
+      onPress={props.onPress}
+      style={{ ...styles.mapPreview, ...props.style }}
+    >
+      {props.location ? (
+        <Image style={styles.mapImage} source={{ uri: imagePreviewUrl }} />
+      ) : (
+        props.children
+      )}
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  mapImage: {
+  mapPreview: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  mapImage: {
     width: "100%",
-    height: 200,
+    height: "100%",
   },
 });
-// Image must have width and height set
 
 export default MapPreview;

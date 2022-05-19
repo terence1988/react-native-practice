@@ -26,7 +26,7 @@ import StartUpScreen from "../screens/StartUpScreen";
 import { useDispatch } from "react-redux";
 import * as authActions from "../store/actions/auth";
 import AddPlaceScreen from "../screens/Map/AddPlaceScreen";
-import ShowMapScreen from "../screens/Map/MapScreen";
+import PlaceListScreen from "../screens/Map/PleaceListScreen";
 import PlaceDetailScreen from "../screens/Map/PlaceDetailScreen";
 import MapPicker from "../components/MapPicker";
 
@@ -140,7 +140,7 @@ const MapNavigator = () => {
     >
       <Stack.Screen
         name="Show Map"
-        component={ShowMapScreen}
+        component={PlaceListScreen}
         options={{ title: "All Places" }}
       />
       <Stack.Screen

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, TextInput, StyleSheet, Image } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
@@ -9,9 +9,10 @@ import ImagePicker from "../../components/ImagePicker";
 import LocationPicker from "../../components/LocationPicker";
 import { ImageInfo } from "expo-image-picker";
 
-const AddPlaceScreen = () => {
+const AddPlaceScreen = (props: any) => {
   const [title, setTitle] = useState("");
   const [rawImage, setRawImage] = useState<ImageInfo | undefined>();
+  const [selectedLocation, setSelectedLocation] = useState();
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -23,8 +24,12 @@ const AddPlaceScreen = () => {
     setRawImage(image);
   };
 
+  const locationPickedHandler = useCallback((location) => {
+    setSelectedLocation(location);
+  }, []);
+
   const savePlaceHandler = () => {
-    dispatch(placeActions.addPlace(title,rawImage?.uri));
+    dispatch(placeActions.addPlace(title, rawImage?.uri));
     navigation.goBack();
   };
 
@@ -39,7 +44,10 @@ const AddPlaceScreen = () => {
         />
       </View>
       <ImagePicker onSelectImage={imageHandler} image={rawImage} />
-      <LocationPicker />
+      <LocationPicker
+        navigation={navigation}
+        onLocationPicked={locationPickedHandler}
+      />
       <Button
         title={`Save Place`}
         onPress={savePlaceHandler}

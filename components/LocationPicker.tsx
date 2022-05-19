@@ -1,91 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
   Button,
+  Text,
+  ActivityIndicator,
   Alert,
+  StyleSheet,
 } from "react-native";
-import MapPreview from "./MapPreview";
 import * as Location from "expo-location";
 
-type ILocation = {
-  lat: number;
-  lng: number;
-};
+import MapPreview from "./MapPreview";
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 
-const LocationPicker = () => {
-  const [location, setLocation] = useState<ILocation>();
-  const [loading, setLoading] = useState(false);
+const LocationPicker = (props: { onLocationPicked: any }) => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const [isFetching, setIsFetching] = useState(false);
+  const [pickedLocation, setPickedLocation] = useState<{
+    lat: number;
+    lng: number;
+  }>();
+  //@ts-expect-error
+  const mapPickedLocation = route.params?.mapPickedLocation;
+
+  const { onLocationPicked } = props;
+
+  useEffect(() => {
+    if (mapPickedLocation) {
+      setPickedLocation(mapPickedLocation);
+      onLocationPicked(mapPickedLocation);
+    }
+  }, [mapPickedLocation, onLocationPicked]);
 
   const getLocationHandler = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("No permission to access location");
+    const hasPermission = await Location.getForegroundPermissionsAsync();
+    if (!hasPermission) {
       return;
     }
+
     try {
-      setLoading(true);
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setLocation({
-        lat: currentLocation.coords.latitude,
-        lng: currentLocation.coords.longitude,
+      setIsFetching(true);
+      const location = await Location.getCurrentPositionAsync();
+      setPickedLocation({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
       });
-      // Object {
-      //   "coords": Object {
-      //     "accuracy": 600,
-      //     "altitude": 0,
-      //     "altitudeAccuracy": 0,
-      //     "heading": 0,
-      //     "latitude": 37.4220936,
-      //     "longitude": -122.083922,
-      //     "speed": 0,
-      //   },
-      //   "mocked": false,
-      //   "timestamp": 1652313908546,
-      // }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
+      props.onLocationPicked({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+    } catch (err) {
+      Alert.alert(
+        "Could not fetch location!",
+        "Please try again later or pick a location on the map.",
+        [{ text: "Okay" }]
+      );
     }
+    setIsFetching(false);
+  };
+
+  const pickOnMapHandler = () => {
+    navigation.navigate("Pick a location");
   };
 
   return (
     <View style={styles.locationPicker}>
-      <Text>LocationPicker</Text>
-      {!loading ? (
-        <View style={styles.previewMap}>
-          {location && Object.keys(location as ILocation).length > 0 ? (
-            <MapPreview location={location} />
-          ) : (
-            <Text>No location picked yet!</Text>
-          )}
-        </View>
-      ) : (
-        <ActivityIndicator size={`large`} color={`#555`} />
-      )}
-      <Button
-        color={`lightblue`}
-        title="Get Location"
-        onPress={getLocationHandler}
-      />
+      <MapPreview
+        style={styles.mapPreview}
+        location={pickedLocation}
+        onPress={pickOnMapHandler}
+      >
+        {isFetching ? (
+          <ActivityIndicator size="large" color={C`red`} />
+        ) : (
+          <Text>No location chosen yet!</Text>
+        )}
+      </MapPreview>
+      <View style={styles.actions}>
+        <Button
+          title="Get User Location"
+          color={`red`}
+          onPress={getLocationHandler}
+        />
+        <Button title="Pick on Map" color={`red`} onPress={pickOnMapHandler} />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   locationPicker: {
-    marginBottom: 16,
+    marginBottom: 15,
   },
-  previewMap: {
-    padding: 10,
+  mapPreview: {
     marginBottom: 10,
     width: "100%",
     height: 150,
-    borderColor: "grey",
+    borderColor: "#ccc",
     borderWidth: 1,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
 });
 
