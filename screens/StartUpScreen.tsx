@@ -3,6 +3,7 @@ import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { SIGN_IN } from "../store/actions/auth";
+import * as Notifications from "expo-notifications";
 
 interface UserData {
   expiresAt: string;
@@ -45,6 +46,13 @@ const StartUpScreen = (props: any) => {
 
   useEffect(() => {
     readItemfromStorage();
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
   }, []);
 
   return (
